@@ -3,89 +3,158 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>حاسبة التوفير الشمسي الذكية</title>
+    <title>سولار تك | حاسبة التوفير الذكية</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Tajawal', sans-serif; }
+        body { font-family: 'Tajawal', sans-serif; scroll-behavior: smooth; }
+        .glass-effect { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px); }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-800">
+<body class="bg-gradient-to-br from-green-50 via-white to-blue-50 min-h-screen text-gray-800">
 
-    <div class="max-w-4xl mx-auto py-12 px-4">
-        <header class="text-center mb-12">
-            <h1 class="text-4xl font-bold text-green-600 mb-2">حاسبة العائد الاستثماري للطاقة الشمسية</h1>
-            <p class="text-gray-600">اكتشف كم ستوفر من المال عند التحول للطاقة النظيفة</p>
-        </header>
+    <nav class="p-6 max-w-6xl mx-auto flex justify-between items-center">
+        <div class="flex items-center gap-2 text-green-600 font-bold text-2xl">
+            <i data-lucide="sun" class="w-8 h-8"></i>
+            <span>سولار تك</span>
+        </div>
+        <a href="#calculator" class="bg-green-600 text-white px-6 py-2 rounded-full font-bold hover:bg-green-700 transition shadow-md">ابدأ الحساب</a>
+    </nav>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div class="bg-white p-6 rounded-2xl shadow-lg border border-green-100">
-                <h2 class="text-xl font-bold mb-6 border-b pb-2">بيانات الاستهلاك</h2>
-                <div class="space-y-4">
-                    <div>
-                        <label class="block text-sm font-medium mb-1">فاتورة الكهرباء الشهرية (بالدرهم المغربي)</label>
-                        <input type="number" id="monthlyBill" value="100" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-green-500 outline-none">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium mb-1">تكلفة تركيب النظام (تقديري)</label>
-                        <input type="number" id="systemCost" value="5000" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-green-500 outline-none">
-                    </div>
-                    <button onclick="calculateSavings()" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-lg transition duration-300">
-                        احسب التوفير الآن
-                    </button>
-                </div>
+    <header class="max-w-4xl mx-auto text-center py-16 px-4">
+        <h1 class="text-4xl md:text-6xl font-extrabold text-gray-900 mb-6 leading-tight">
+            حول أشعة الشمس إلى <span class="text-green-600">أرباح حقيقية</span>
+        </h1>
+        <p class="text-lg text-gray-600 mb-8 max-w-2xl mx-auto">
+            نساعدك على حساب جدوى الطاقة الشمسية لمنزلك بدقة متناهية ونربطك بأفضل الخبراء في منطقتك.
+        </p>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
+            <div class="p-4">
+                <div class="bg-white w-12 h-12 rounded-full flex items-center justify-center mx-auto shadow-sm mb-3 text-green-600"><i data-lucide="calculator"></i></div>
+                <h3 class="font-bold">1. أدخل بياناتك</h3>
             </div>
-
-            <div class="bg-white p-6 rounded-2xl shadow-lg border border-green-100 flex flex-col justify-center text-center">
-                <h2 class="text-xl font-bold mb-4">ملخص الأرباح</h2>
-                <div class="mb-6">
-                    <span class="text-gray-500 block">التوفير السنوي المتوقع</span>
-                    <span id="annualSavingText" class="text-3xl font-bold text-green-600">MAD1,200</span>
-                </div>
-                <div>
-                    <span class="text-gray-500 block">فترة استرداد رأس المال</span>
-                    <span id="paybackText" class="text-3xl font-bold text-blue-600">4.2 سنة</span>
-                </div>
+            <div class="p-4">
+                <div class="bg-white w-12 h-12 rounded-full flex items-center justify-center mx-auto shadow-sm mb-3 text-blue-600"><i data-lucide="trending-up"></i></div>
+                <h3 class="font-bold">2. شاهد أرباحك</h3>
+            </div>
+            <div class="p-4">
+                <div class="bg-white w-12 h-12 rounded-full flex items-center justify-center mx-auto shadow-sm mb-3 text-orange-600"><i data-lucide="check-circle"></i></div>
+                <h3 class="font-bold">3. احصل على عرضك</h3>
             </div>
         </div>
+    </header>
 
-        <div class="mt-12 bg-white p-6 rounded-2xl shadow-lg">
-            <h3 class="text-xl font-bold mb-4 text-center">نمو التوفير التراكمي (خلال 10 سنوات)</h3>
-            <canvas id="savingsChart" width="400" height="200"></canvas>
-        </div>
-
-        <div class="mt-8 bg-green-50 p-8 rounded-2xl border-2 border-dashed border-green-200 text-center">
-            <h3 class="text-2xl font-bold text-green-800 mb-4">هل تريد البدء في التوفير فعلياً؟</h3>
-            <p class="mb-6 text-gray-700">اترك بياناتك وسنقوم بربطك بأفضل شركات الطاقة الشمسية في منطقتك للحصول على خصم خاص.</p>
+    <main id="calculator" class="max-w-5xl mx-auto py-12 px-4">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 items-start">
             
-            <form action="https://formspree.io/f/xvzwgbag" method="POST" class="max-w-md mx-auto space-y-4">
-                <input type="text" name="name" placeholder="الاسم الكامل" required class="w-full p-3 border rounded-lg outline-none focus:ring-2 focus:ring-green-500">
-                <input type="email" name="email" placeholder="البريد الإلكتروني" required class="w-full p-3 border rounded-lg outline-none focus:ring-2 focus:ring-green-500">
-                <input type="tel" name="phone" placeholder="رقم الهاتف" required class="w-full p-3 border rounded-lg outline-none focus:ring-2 focus:ring-green-500">
-                <button type="submit" class="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 rounded-lg shadow-lg transition">
-                    احصل على عرض سعر مجاني
-                </button>
-            </form>
-            <p class="text-xs text-gray-400 mt-4">* نحن نحترم خصوصيتك، بياناتك ترسل فقط للشركات المعتمدة.</p>
+            <div class="bg-white p-8 rounded-3xl shadow-xl border border-gray-100">
+                <div class="flex items-center gap-2 mb-6 text-green-700 font-bold text-xl border-b pb-4">
+                    <i data-lucide="settings"></i>
+                    <h2>إعدادات النظام</h2>
+                </div>
+                
+                <div class="space-y-6">
+                    <div>
+                        <label class="block text-sm font-semibold mb-2">متوسط فاتورة الكهرباء (بالدولار)</label>
+                        <input type="range" id="billRange" min="20" max="1000" value="150" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-green-600" oninput="calculateSavings()">
+                        <div class="flex justify-between mt-2 font-bold text-green-600">
+                            <span>$20</span>
+                            <span id="billVal" class="text-2xl">$150</span>
+                            <span>$1000</span>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-semibold mb-2">تكلفة النظام المتوقعة ($)</label>
+                        <input type="number" id="systemCost" value="6000" class="w-full p-4 border-2 border-gray-100 rounded-xl focus:border-green-500 outline-none transition shadow-sm">
+                    </div>
+                </div>
+            </div>
+
+            <div class="space-y-6">
+                <div class="bg-green-600 text-white p-8 rounded-3xl shadow-xl transform transition hover:scale-105">
+                    <p class="text-green-100 text-sm mb-1 uppercase tracking-wider font-bold">التوفير السنوي الصافي</p>
+                    <h3 id="annualSavingText" class="text-5xl font-extrabold">$1,800</h3>
+                </div>
+                
+                <div class="bg-white p-8 rounded-3xl shadow-lg border border-gray-100 flex justify-between items-center">
+                    <div>
+                        <p class="text-gray-500 font-medium">تسترد استثمارك خلال</p>
+                        <h3 id="paybackText" class="text-3xl font-extrabold text-blue-600">3.3 سنة</h3>
+                    </div>
+                    <div class="bg-blue-50 p-4 rounded-full text-blue-600">
+                        <i data-lucide="clock" class="w-10 h-10"></i>
+                    </div>
+                </div>
+            </div>
         </div>
+
+        <div class="mt-12 bg-white p-8 rounded-3xl shadow-xl border border-gray-100">
+            <h3 class="text-xl font-bold mb-6 text-center text-gray-700">نمو ثروتك بفضل الطاقة الشمسية</h3>
+            <canvas id="savingsChart" class="max-h-80"></canvas>
         </div>
+
+        <div class="mt-16 bg-gradient-to-r from-orange-400 to-orange-600 p-1 rounded-3xl shadow-2xl">
+            <div class="bg-white p-8 md:p-12 rounded-[calc(1.5rem-1px)] text-center">
+                <h2 class="text-3xl font-extrabold text-gray-900 mb-4">جاهز لإلغاء فواتيرك للأبد؟ 🚀</h2>
+                <p class="text-gray-600 mb-8 max-w-xl mx-auto">سجل الآن للحصول على دراسة جدوى مجانية من أفضل المهندسين المعتمدين في منطقتك.</p>
+                
+                <form action="https://formspree.io/f/xvzwgbag" method="POST" class="max-w-lg mx-auto grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <input type="text" name="name" placeholder="الاسم الكامل" required class="p-4 border-2 border-gray-100 rounded-xl focus:border-orange-500 outline-none">
+                    <input type="tel" name="phone" placeholder="رقم الهاتف" required class="p-4 border-2 border-gray-100 rounded-xl focus:border-orange-500 outline-none">
+                    <input type="email" name="email" placeholder="البريد الإلكتروني" required class="md:col-span-2 p-4 border-2 border-gray-100 rounded-xl focus:border-orange-500 outline-none">
+                    <button type="submit" class="md:col-span-2 bg-orange-500 hover:bg-orange-600 text-white font-bold py-4 rounded-xl shadow-lg transition-all active:scale-95 text-xl">
+                        احصل على عرض السعر المجاني
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <div class="mt-20 max-w-3xl mx-auto">
+            <h2 class="text-2xl font-bold mb-8 text-center">الأسئلة الشائعة</h2>
+            <div class="space-y-4">
+                <details class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 cursor-pointer">
+                    <summary class="font-bold">هل الطاقة الشمسية فعالة في الأيام الغائمة؟</summary>
+                    <p class="mt-2 text-gray-600 text-sm leading-relaxed">نعم، الألواح الحديثة تستطيع توليد الطاقة من ضوء الشمس غير المباشر، لكن بكفاءة أقل قليلاً من الأيام المشمسة.</p>
+                </details>
+                <details class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 cursor-pointer">
+                    <summary class="font-bold">كم تدوم الألواح الشمسية؟</summary>
+                    <p class="mt-2 text-gray-600 text-sm leading-relaxed">تتمتع الألواح الشمسية بضمان كفاءة يصل عادة إلى 25 سنة، ويمكنها العمل لفترة أطول.</p>
+                </details>
+            </div>
+        </div>
+    </main>
+
+    <footer class="text-center py-10 text-gray-400 text-sm">
+        <p>&copy; 2026 سولار تك - جميع الحقوق محفوظة</p>
+    </footer>
 
     <script>
+        lucide.createIcons();
         let chart;
+
         function calculateSavings() {
-            const bill = parseFloat(document.getElementById('monthlyBill').value);
+            const bill = parseFloat(document.getElementById('billRange').value);
             const cost = parseFloat(document.getElementById('systemCost').value);
+            
+            document.getElementById('billVal').innerText = `$${bill}`;
+            
             const annualSaving = bill * 12;
             const paybackPeriod = cost / annualSaving;
+
             document.getElementById('annualSavingText').innerText = `$${annualSaving.toLocaleString()}`;
             document.getElementById('paybackText').innerText = `${paybackPeriod.toFixed(1)} سنة`;
+
             updateChart(annualSaving, cost);
         }
 
         function updateChart(annualSaving, initialCost) {
             const labels = Array.from({length: 11}, (_, i) => `سنة ${i}`);
             const data = Array.from({length: 11}, (_, i) => (annualSaving * i) - initialCost);
+
             if (chart) chart.destroy();
             const ctx = document.getElementById('savingsChart').getContext('2d');
             chart = new Chart(ctx, {
@@ -93,17 +162,23 @@
                 data: {
                     labels: labels,
                     datasets: [{
-                        label: 'صافي التوفير المتراكم (MAD)',
+                        label: 'صافي الربح المتراكم ($)',
                         data: data,
-                        borderColor: '#10b981',
-                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                        borderColor: '#16a34a',
+                        backgroundColor: 'rgba(22, 163, 74, 0.1)',
                         fill: true,
-                        tension: 0.3
+                        tension: 0.4,
+                        pointRadius: 5
                     }]
                 },
-                options: { responsive: true }
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } }
+                }
             });
         }
+
         calculateSavings();
     </script>
 </body>
