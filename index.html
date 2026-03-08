@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>حاسبة التوفير الشمسي الذكية</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Tajawal', sans-serif; }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+    <div class="max-w-4xl mx-auto py-12 px-4">
+        <header class="text-center mb-12">
+            <h1 class="text-4xl font-bold text-green-600 mb-2">حاسبة العائد الاستثماري للطاقة الشمسية</h1>
+            <p class="text-gray-600">اكتشف كم ستوفر من المال عند التحول للطاقة النظيفة</p>
+        </header>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div class="bg-white p-6 rounded-2xl shadow-lg border border-green-100">
+                <h2 class="text-xl font-bold mb-6 border-b pb-2">بيانات الاستهلاك</h2>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium mb-1">فاتورة الكهرباء الشهرية (بالدرهم المغربي)</label>
+                        <input type="number" id="monthlyBill" value="100" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-green-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1">تكلفة تركيب النظام (تقديري)</label>
+                        <input type="number" id="systemCost" value="5000" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-green-500 outline-none">
+                    </div>
+                    <button onclick="calculateSavings()" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-lg transition duration-300">
+                        احسب التوفير الآن
+                    </button>
+                </div>
+            </div>
+
+            <div class="bg-white p-6 rounded-2xl shadow-lg border border-green-100 flex flex-col justify-center text-center">
+                <h2 class="text-xl font-bold mb-4">ملخص الأرباح</h2>
+                <div class="mb-6">
+                    <span class="text-gray-500 block">التوفير السنوي المتوقع</span>
+                    <span id="annualSavingText" class="text-3xl font-bold text-green-600">MAD1,200</span>
+                </div>
+                <div>
+                    <span class="text-gray-500 block">فترة استرداد رأس المال</span>
+                    <span id="paybackText" class="text-3xl font-bold text-blue-600">4.2 سنة</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-12 bg-white p-6 rounded-2xl shadow-lg">
+            <h3 class="text-xl font-bold mb-4 text-center">نمو التوفير التراكمي (خلال 10 سنوات)</h3>
+            <canvas id="savingsChart" width="400" height="200"></canvas>
+        </div>
+
+        <div class="mt-8 bg-green-50 p-8 rounded-2xl border-2 border-dashed border-green-200 text-center">
+            <h3 class="text-2xl font-bold text-green-800 mb-4">هل تريد البدء في التوفير فعلياً؟</h3>
+            <p class="mb-6 text-gray-700">اترك بياناتك وسنقوم بربطك بأفضل شركات الطاقة الشمسية في منطقتك للحصول على خصم خاص.</p>
+            
+            <form action="https://formspree.io/f/xvzwgbag" method="POST" class="max-w-md mx-auto space-y-4">
+                <input type="text" name="name" placeholder="الاسم الكامل" required class="w-full p-3 border rounded-lg outline-none focus:ring-2 focus:ring-green-500">
+                <input type="email" name="email" placeholder="البريد الإلكتروني" required class="w-full p-3 border rounded-lg outline-none focus:ring-2 focus:ring-green-500">
+                <input type="tel" name="phone" placeholder="رقم الهاتف" required class="w-full p-3 border rounded-lg outline-none focus:ring-2 focus:ring-green-500">
+                <button type="submit" class="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 rounded-lg shadow-lg transition">
+                    احصل على عرض سعر مجاني
+                </button>
+            </form>
+            <p class="text-xs text-gray-400 mt-4">* نحن نحترم خصوصيتك، بياناتك ترسل فقط للشركات المعتمدة.</p>
+        </div>
+        </div>
+
+    <script>
+        let chart;
+        function calculateSavings() {
+            const bill = parseFloat(document.getElementById('monthlyBill').value);
+            const cost = parseFloat(document.getElementById('systemCost').value);
+            const annualSaving = bill * 12;
+            const paybackPeriod = cost / annualSaving;
+            document.getElementById('annualSavingText').innerText = `$${annualSaving.toLocaleString()}`;
+            document.getElementById('paybackText').innerText = `${paybackPeriod.toFixed(1)} سنة`;
+            updateChart(annualSaving, cost);
+        }
+
+        function updateChart(annualSaving, initialCost) {
+            const labels = Array.from({length: 11}, (_, i) => `سنة ${i}`);
+            const data = Array.from({length: 11}, (_, i) => (annualSaving * i) - initialCost);
+            if (chart) chart.destroy();
+            const ctx = document.getElementById('savingsChart').getContext('2d');
+            chart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'صافي التوفير المتراكم (MAD)',
+                        data: data,
+                        borderColor: '#10b981',
+                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                        fill: true,
+                        tension: 0.3
+                    }]
+                },
+                options: { responsive: true }
+            });
+        }
+        calculateSavings();
+    </script>
+</body>
+</html>
